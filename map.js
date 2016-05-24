@@ -1,3 +1,39 @@
+var O_style = {
+	weight : 0.6,
+	color : "#000",
+	opacity : 1,
+	fillColor : "#bebada",
+	fillOpacity : 0.9
+};
+
+var BI_style = {
+	weight : 0.25,
+	color : "#000",
+	opacity : 1,
+	fillColor : "#1f78b4",
+	fillOpacity : 0.9
+};
+
+var PS_style = {
+	weight : 0.25,
+	color : "#000",
+	opacity : 1,
+	fillColor : "#b2df8a",
+	fillOpacity : 0.9
+};
+
+function styleSelector(feature) {
+	switch (feature.properties["Admin_Type"]) {
+	case "Princely States":
+		return PS_style;
+	case "British India":
+		return BI_style;
+	case "Foreign":
+		return O_style;
+	}
+}
+
+
 	var map= L.map('map');
 	 
 //Background Layer
@@ -8,32 +44,28 @@
 		 
 	map.setView([25,80], 5);
 
-	//Add TopoJSON
-	var data=omnivore.topojson('BA.json',{
-		/*	style : styleSelector,*/
-			onEachFeature : onEachFeature
-		});
-	data.addTo(map);
-	
-	
+var geojson = topojson.feature(BA, BA.objects.data);
+var sLayer = L.geoJson(geojson, {
+		style : styleSelector,
+		onEachFeature : onEachFeature
+	}).addTo(map);
+var popup;
+function onEachFeature(feature, layer) {
+	layer.on('click', function (e) {
+		console.dir(e.target.feature.properties);
+
+		//Popup Here
+        var popText=createPopUpText(e.target.feature.properties);
+        popup = L.popup().setLatLng(e.latlng)
+            .setContent(popText).openOn(map);
+           
+
+	});
+}
 
 
-
-	var popup;
-	function onEachFeature(feature, layer) {
-		layer.on('click', function (e) {
-	 	 console.dir(e);
-	 	 /*   selectedFeature = feature;
-			if (feature.properties.v!=2){
-	        //show popup
-	        var popText=createPopUpText();
-	        popup = L.popup().setLatLng(e.latlng)
-	            .setContent(popText).openOn(map);
-	            //set focus
-	            document.getElementById('StateSelector').focus();
-				}
-
-				*/
-		});
-	}
+function createPopUpText(data){
+var  innerHTML='<h3>India Ca. 1946</h3><p><br />Name: '+ data["Name"]+"<br /> Administrative Unit: "+data["Admin_1"]+"<br /> Type: "+data["Admin_Type"]+ "</p>";
+return innerHTML;
+}
 
