@@ -36,11 +36,19 @@ function styleSelector(feature) {
 
 	var map= L.map('map');
 	 
-//Background Layer
-		L.tileLayer('//otile{s}-s.mqcdn.com/tiles/1.0.0/sat/{z}/{x}/{y}.jpg', {
-			attribution : 'Tiles Courtesy of <a href="http://www.mapquest.com/">MapQuest</a> &mdash; Portions Courtesy NASA/JPL-Caltech and U.S. Depart. of Agriculture, Farm Service Agency',
-			subdomains : '1234'
-		}).addTo(map);
+//Background Layer, if key exists
+if(api_key){
+	var vivid = new L.tileLayer('https://{s}.tiles.mapbox.com/v4/digitalglobe.n6ngnadl/{z}/{x}/{y}.png?access_token=' + api_key, {
+		minZoom: 1,
+		maxZoom: 19,
+		attribution: '(c) <a href="http://microsites.digitalglobe.com/interactive/basemap_vivid/">DigitalGlobe</a>'
+	});
+	vivid.addTo(map);
+}else{
+	//no key exists
+	console.error("No Key Exists");
+}
+
 		 
 	map.setView([25,80], 5);
 
