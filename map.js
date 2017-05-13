@@ -22,6 +22,14 @@ var PS_style = {
 	fillOpacity : 0.9
 };
 
+var selectedFeature_style={
+	weight : 1.5,
+	color : "#000",
+	opacity : 1,
+	fillColor : "#4f3",
+	fillOpacity : 1
+}
+
 function styleSelector(feature) {
 	switch (feature.properties["Admin_Type"]) {
 	case "Princely States":
@@ -60,12 +68,23 @@ var sLayer = L.geoJson(geojson, {
 var popup;
 function onEachFeature(feature, layer) {
 	layer.on('click', function (e) {
-		console.dir(e.target.feature.properties);
+		//feature
+		var feat=e.target.feature;
+		//show it as selected
+		var selected=L.geoJson(feat, {
+			    style:selectedFeature_style
+			}).addTo(map);
 
 		//Popup Here
         var popText=createPopUpText(e.target.feature.properties);
         popup = L.popup().setLatLng(e.latlng)
             .setContent(popText).openOn(map);
+
+        //close event of popup
+        map.on('popupclose', function(e) {
+        	//remove layer
+        	map.removeLayer(selected);
+        });
            
 
 	});
